@@ -1,0 +1,28 @@
+extend type Query {
+  topProducts(first: Int = 5): [Product]
+}
+
+type Product @key(fields: "upc") {
+  upc: String!
+  name: String
+  price: Int
+  weight: Int
+  owner: Identity
+}
+
+type Identity @key(fields: "id") @interfaceObject {
+  id: ID!
+  likesProduct: Boolean!
+}
+
+scalar link__Import
+
+directive @link(url: String!, import: [link__Import]) repeatable on SCHEMA
+
+directive @interfaceObject on OBJECT
+
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.4"
+    import: ["@key", "@interfaceObject"]
+  )

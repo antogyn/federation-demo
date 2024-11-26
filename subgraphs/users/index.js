@@ -1,34 +1,12 @@
 import { ApolloServer, gql } from "apollo-server";
 import { buildSubgraphSchema } from "@apollo/subgraph";
+import { readFileSync } from "fs";
+import { fileURLToPath } from 'url';
+import path from 'path';
 
-const typeDefs = gql`
-  scalar link__Import
-
-  directive @link(
-    url: String!,
-    import: [link__Import],
-  ) repeatable on SCHEMA
-
-  extend schema
-    @link(url: "https://specs.apollo.dev/federation/v2.4",
-      import: ["@key"])
-
-  interface Identity @key(fields: "id") {
-    id: ID!
-    name: String
-    username: String
-  }
-
-  extend type Query {
-    me: Identity
-  }
-
-  type User implements Identity @key(fields: "id")  {
-    id: ID!
-    name: String
-    username: String
-  }
-`;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const typeDefs = gql`${readFileSync(__dirname + "/schema.graphql", "utf-8")}`
 
 const resolvers = {
   Query: {
@@ -52,7 +30,8 @@ const server = new ApolloServer({
   schema: buildSubgraphSchema([
     {
       typeDefs,
-      resolvers
+      resolvers,
+
     }
   ])
 });

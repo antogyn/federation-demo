@@ -1,38 +1,12 @@
 import { ApolloServer, gql } from "apollo-server";
 import { buildSubgraphSchema } from "@apollo/subgraph";
+import { readFileSync } from "fs";
+import { fileURLToPath } from 'url';
+import path from 'path';
 
-const typeDefs = gql`
-  # Required for all subgraph schemas
-  scalar link__Import
-
-  directive @link(
-    url: String!,
-    import: [link__Import],
-  ) repeatable on SCHEMA
-
-  directive @interfaceObject on OBJECT
-
-  extend schema
-    @link(url: "https://specs.apollo.dev/federation/v2.4",
-      import: ["@key", "@interfaceObject"])
-
-  extend type Query {
-    topProducts(first: Int = 5): [Product]
-  }
-
-  type Product @key(fields: "upc") {
-    upc: String!
-    name: String
-    price: Int
-    weight: Int
-    owner: Identity
-  }
-
-  type Identity @key(fields: "id") @interfaceObject {
-    id: ID!
-    likesProduct: Boolean!
-  }
-`;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const typeDefs = gql`${readFileSync(__dirname + "/schema.graphql", "utf-8")}`
 
 const resolvers = {
   Product: {
@@ -56,7 +30,7 @@ const server = new ApolloServer({
   schema: buildSubgraphSchema([
     {
       typeDefs,
-      resolvers
+      resolvers,
     }
   ])
 });

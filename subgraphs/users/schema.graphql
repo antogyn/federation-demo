@@ -1,0 +1,22 @@
+interface Identity @key(fields: "id") {
+  id: ID!
+  name: String
+  username: String
+}
+
+extend type Query {
+  me: Identity
+}
+
+type User implements Identity @key(fields: "id") {
+  id: ID!
+  name: String
+  username: String
+}
+
+scalar link__Import
+
+directive @link(url: String!, import: [link__Import]) repeatable on SCHEMA
+
+extend schema
+  @link(url: "https://specs.apollo.dev/federation/v2.4", import: ["@key"])
