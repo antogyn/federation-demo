@@ -1,0 +1,19 @@
+{
+  "name": "federation-demo",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev-subgraph-users": "yarn workspace users dev",
+    "dev-subgraph-products": "yarn workspace products dev",
+    "dev-subgraph": "concurrently \"yarn run dev-subgraph-*\"",
+    "dev-gateway": "yarn workspace gateway dev",
+    "dev": "concurrently \"yarn run dev-subgraph-*\" \"yarn run dev-gateway\""
+  },
+  "workspaces": [
+    "subgraphs/*",
+    "gateway"
+  ],
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}
